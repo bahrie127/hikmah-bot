@@ -33,17 +33,17 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
 
         DBConnection.db.run(action).map{
             case Some(history) => DBConnection.db.run(LineBotServiceImpl.quranTable.filter(_.id===history.quranId+1).result.headOption).map{
-                case Some(ayah) => lineReply(chat.replyToken, s"${ayah.verseid}:${ayah.suraid}. ${ayah.ayaharab.get}, \n artinya: ${ayah.ayahtext}.")
+                case Some(ayah) => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
                     updateChat(chat, history.quranId+1)
                 case None => DBConnection.db.run(LineBotServiceImpl.quranTable.filter(_.id===1).result.head).map{
-                    ayah => lineReply(chat.replyToken, s"${ayah.verseid}:${ayah.suraid}. ${ayah.ayaharab.get}, \n artinya: ${ayah.ayahtext}.")
+                    ayah => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
                         updateChat(chat, 1)
                 }
 
             }
 
             case None => DBConnection.db.run(LineBotServiceImpl.quranTable.filter(_.id===1).result.head).map{
-                ayah => lineReply(chat.replyToken, s"${ayah.verseid}:${ayah.suraid}. ${ayah.ayaharab.get}, \n artinya: ${ayah.ayahtext}.")
+                ayah => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
                     storingChat(chat, 1)
             }
         }
