@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="SBT: com.linecorp.bot:line-bot-model:1.6.0:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.linecorp.bot/line-bot-model/jars/line-bot-model-1.6.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.linecorp.bot/line-bot-model/srcs/line-bot-model-1.6.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
