@@ -8,7 +8,7 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import slick.driver.MySQLDriver.api._
-import tables.Tables.{Histories, QuranIndonesia}
+import tables.Tables.{Histories, QuranIndonesia, Surah}
 import com.bahri.bot.responses.LineBotResponsesFormatters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,6 +27,81 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
     override def replyChat(chats: Seq[Event]): Future[Boolean] = {
         val chat = chats(0)
 
+        val command = chat.message.text
+        command match {
+            case Some(text) =>
+                text match {
+                    case "list surat" => getListSurah(chat)
+                    case "list surah" => getListSurah(chat)
+                    case txt if txt.charAt(0) == "Q" => getQuranByQS(text, chat)
+                    case _ => nextReadingQuran(chat)
+                }
+            case None => nextReadingQuran(chat)
+        }
+
+//        val action = for{
+//            history <-LineBotServiceImpl.historiesTable.filter(_.user===chat.source.userId.getOrElse("")).result.headOption
+//        }yield history
+//
+//        DBConnection.db.run(action).map{
+//            case Some(history) => DBConnection.db.run(LineBotServiceImpl.quranTable.filter(_.id===history.quranId+1).result.headOption).map{
+//                case Some(ayah) => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
+//                    updateChat(chat, history.quranId+1)
+//                case None => DBConnection.db.run(LineBotServiceImpl.quranTable.filter(_.id===1).result.head).map{
+//                    ayah => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
+//                        updateChat(chat, 1)
+//                }
+//
+//            }
+//
+//            case None => DBConnection.db.run(LineBotServiceImpl.quranTable.filter(_.id===1).result.head).map{
+//                ayah => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
+//                    storingChat(chat, 1)
+//            }
+//        }
+
+        Future.apply(true)
+    }
+
+    protected def getListSurah(chat: Event): Unit = {
+        val listSurah = for{
+            list <- LineBotServiceImpl.surahTable.result
+        }yield list
+
+        DBConnection.db.run(listSurah).map{
+            result => val textAllSurah = result.map{
+                s => (s.id,s"${s.id}. ${s.nameSurah.get}")
+            }
+                lineReply(chat.replyToken, textAllSurah.sortBy(_._1).map(_._2).mkString("\n"))
+        }
+    }
+
+    protected def getQuranByQS(msg: String, chat: Event): Unit = {
+        val surahNo = msg.replace("Q","").split(":")(0)
+        val ayahNo = msg.replace("Q","").split(":")(1)
+        val action = for{
+            history <-LineBotServiceImpl.historiesTable.filter(_.user===chat.source.userId.getOrElse("")).result.headOption
+        }yield history
+
+        DBConnection.db.run(action).map{
+            case Some(history) =>
+                DBConnection.db.run(LineBotServiceImpl.quranTable.filter(q => (q.suraid == surahNo && q.verseid == ayahNo)).result.headOption).map{
+                case Some(ayah) => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
+                    updateChat(chat, ayah.id)
+                case None => lineReply(chat.replyToken, "surah tidak ditemukan")
+
+            }
+
+            case None =>
+                DBConnection.db.run(LineBotServiceImpl.quranTable.filter(q => (q.suraid == surahNo && q.verseid == ayahNo)).result.headOption).map{
+                    case Some(ayah) => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
+                        storingChat(chat, ayah.id)
+                    case None => lineReply(chat.replyToken, "surah tidak ditemukan")
+            }
+        }
+    }
+
+    protected def nextReadingQuran(chat: Event): Unit = {
         val action = for{
             history <-LineBotServiceImpl.historiesTable.filter(_.user===chat.source.userId.getOrElse("")).result.headOption
         }yield history
@@ -47,8 +122,6 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
                     storingChat(chat, 1)
             }
         }
-
-        Future.apply(true)
     }
 
     def storingChat(chat: Event, idQuran: Int)= {
@@ -73,6 +146,7 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
 object LineBotServiceImpl{
     val quranTable= TableQuery[QuranIndonesia]
     val historiesTable = TableQuery[Histories]
+    val surahTable = TableQuery[Surah]
 
 }
 

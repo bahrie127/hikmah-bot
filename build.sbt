@@ -1,4 +1,4 @@
-name := """line-bot-scala"""
+name := """hikmah-bot"""
 
 version := "1.0-SNAPSHOT"
 
