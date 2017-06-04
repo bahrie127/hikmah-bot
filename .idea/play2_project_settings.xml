@@ -3,6 +3,13 @@
   <component name="Play2ExcludedModulesSettings">
     <option name="INFO">
       <map>
+        <entry key="hikmah-bot">
+          <value>
+            <ProjectSettingsEntry>
+              <option name="playDistrPath" value="$USER_HOME$/.ivy2/cache/com.typesafe.play/play_2.11/jars/play_2.11-2.4.3.jar" />
+            </ProjectSettingsEntry>
+          </value>
+        </entry>
         <entry key="line-bot-scala">
           <value>
             <ProjectSettingsEntry>
@@ -13,6 +20,7 @@
         <entry key="root">
           <value>
             <ProjectSettingsEntry>
+              <option name="sourceDir" value="$PROJECT_DIR$/app" />
               <option name="confDir" value="$PROJECT_DIR$/app" />
               <option name="templateImports">
                 <list>

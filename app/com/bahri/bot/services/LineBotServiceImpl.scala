@@ -77,15 +77,15 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
     }
 
     protected def getQuranByQS(msg: String, chat: Event): Unit = {
-        val surahNo = msg.replace("Q","").split(":")(0)
-        val ayahNo = msg.replace("Q","").split(":")(1)
+        val surahNo = msg.replace("Q","").split(":")(0).toString.toInt
+        val ayahNo = msg.replace("Q","").split(":")(1).toString.toInt
         val action = for{
             history <-LineBotServiceImpl.historiesTable.filter(_.user===chat.source.userId.getOrElse("")).result.headOption
         }yield history
 
         DBConnection.db.run(action).map{
             case Some(history) =>
-                DBConnection.db.run(LineBotServiceImpl.quranTable.filter(q => (q.suraid == surahNo && q.verseid == ayahNo)).result.headOption).map{
+                DBConnection.db.run(LineBotServiceImpl.quranTable.filter(q => (q.suraid === surahNo && q.verseid === ayahNo)).result.headOption).map{
                 case Some(ayah) => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
                     updateChat(chat, ayah.id)
                 case None => lineReply(chat.replyToken, "surah tidak ditemukan")
@@ -93,7 +93,7 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
             }
 
             case None =>
-                DBConnection.db.run(LineBotServiceImpl.quranTable.filter(q => (q.suraid == surahNo && q.verseid == ayahNo)).result.headOption).map{
+                DBConnection.db.run(LineBotServiceImpl.quranTable.filter(q => (q.suraid === surahNo && q.verseid === ayahNo)).result.headOption).map{
                     case Some(ayah) => lineReply(chat.replyToken, s"${ayah.ayaharab.get}, \nQ${ayah.suraid}:${ayah.verseid}. ${ayah.ayahtext}")
                         storingChat(chat, ayah.id)
                     case None => lineReply(chat.replyToken, "surah tidak ditemukan")
