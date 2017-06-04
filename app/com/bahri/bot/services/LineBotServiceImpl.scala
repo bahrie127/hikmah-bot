@@ -28,12 +28,13 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
         val chat = chats(0)
 
         val command = chat.message.text
+        Logger.info("command =>> "+ command)
         command match {
             case Some(text) =>
                 text match {
+                    case txt if (txt.charAt(0) == 'Q') => getQuranByQS(text, chat)
                     case "list surat" => getListSurah(chat)
                     case "list surah" => getListSurah(chat)
-                    case txt if txt.charAt(0) == "Q" => getQuranByQS(text, chat)
                     case _ => nextReadingQuran(chat)
                 }
             case None => nextReadingQuran(chat)
@@ -64,21 +65,23 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
     }
 
     protected def getListSurah(chat: Event): Unit = {
+        Logger.info("List surah")
         val listSurah = for{
             list <- LineBotServiceImpl.surahTable.result
         }yield list
 
         DBConnection.db.run(listSurah).map{
-            result => val textAllSurah = result.map{
-                s => (s.id,s"${s.id}. ${s.nameSurah.get}")
-            }
-                lineReply(chat.replyToken, textAllSurah.sortBy(_._1).map(_._2).mkString("\n"))
+            result => val textAllSurah = result.map(s => s"${s.id}. ${s.nameSurah.get}")
+                Logger.info(s"all surah => ${textAllSurah.mkString(",")}")
+                lineReply(chat.replyToken, textAllSurah.mkString("\n"))
         }
     }
 
     protected def getQuranByQS(msg: String, chat: Event): Unit = {
+        Logger.info("get Quran by QS "+ msg)
         val surahNo = msg.replace("Q","").split(":")(0).toString.toInt
         val ayahNo = msg.replace("Q","").split(":")(1).toString.toInt
+        Logger.info(s"Surah => $surahNo, ayah => $ayahNo")
         val action = for{
             history <-LineBotServiceImpl.historiesTable.filter(_.user===chat.source.userId.getOrElse("")).result.headOption
         }yield history
