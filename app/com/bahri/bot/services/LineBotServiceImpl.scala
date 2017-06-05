@@ -28,7 +28,7 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
         val chat = chats(0)
 
         val command = chat.message.text
-        Logger.info("command =>> "+ command)
+        Logger.info("command => "+ command)
         command match {
             case Some(text) =>
                 text match {
@@ -71,9 +71,10 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
         }yield list
 
         DBConnection.db.run(listSurah).map{
-            result => val textAllSurah = result.map(s => s"${s.id}. ${s.nameSurah.get}")
-                Logger.info(s"all surah => ${textAllSurah.mkString(",")}")
-                lineReply(chat.replyToken, textAllSurah.mkString("\n"))
+            result => val textAllSurah1 = result.filter(_.id <=50 )map(s => s"${s.id}. ${s.nameSurah.get}")
+                val textAllSurah2 = result.filter(_.id >50 )map(s => s"${s.id}. ${s.nameSurah.get}")
+                lineReply(chat.replyToken, textAllSurah1.mkString("\n"))
+                lineReply(chat.replyToken, textAllSurah2.mkString("\n"))
         }
     }
 
