@@ -62,8 +62,8 @@
       <file leaf-file-name="LineBotServiceImpl.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/com/bahri/bot/services/LineBotServiceImpl.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="30" column="30" lean-forward="false" selection-start-line="30" selection-start-column="30" selection-end-line="30" selection-end-column="30" />
+            <state relative-caret-position="544">
+              <caret line="74" column="56" lean-forward="false" selection-start-line="74" selection-start-column="56" selection-end-line="74" selection-end-column="56" />
               <folding>
                 <element signature="e#31#57#0" expanded="true" />
               </folding>
@@ -481,7 +481,7 @@
       <option name="presentableId" value="Default" />
       <updated>1495462936294</updated>
       <workItem from="1495462986470" duration="4726000" />
-      <workItem from="1496615549138" duration="5158000" />
+      <workItem from="1496615549138" duration="5452000" />
     </task>
     <task id="LOCAL-00001" summary="add feature :&#10;- getSurah by surah no and ayah no&#10;- get Surah List">
       <created>1496618177360</created>
@@ -504,11 +504,18 @@
       <option name="project" value="LOCAL" />
       <updated>1496620176011</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fixed: if msg more than 2000 char">
+      <created>1496620810228</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1496620810228</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9884000" />
+    <option name="totallyTimeSpent" value="10178000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="11" y="23" width="1646" height="975" extended-state="0" />
@@ -558,7 +565,8 @@
     <MESSAGE value="add feature :&#10;- getSurah by surah no and ayah no&#10;- get Surah List" />
     <MESSAGE value="fixed: filter by ayah and surah" />
     <MESSAGE value="fixed: match case" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed: match case" />
+    <MESSAGE value="fixed: if msg more than 2000 char" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed: if msg more than 2000 char" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -713,8 +721,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/com/bahri/bot/services/LineBotServiceImpl.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="30" column="30" lean-forward="false" selection-start-line="30" selection-start-column="30" selection-end-line="30" selection-end-column="30" />
+        <state relative-caret-position="544">
+          <caret line="74" column="56" lean-forward="false" selection-start-line="74" selection-start-column="56" selection-end-line="74" selection-end-column="56" />
           <folding>
             <element signature="e#31#57#0" expanded="true" />
           </folding>

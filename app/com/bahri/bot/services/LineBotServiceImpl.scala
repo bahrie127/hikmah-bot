@@ -71,10 +71,8 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
         }yield list
 
         DBConnection.db.run(listSurah).map{
-            result => val textAllSurah1 = result.filter(_.id <=50 )map(s => s"${s.id}. ${s.nameSurah.get}")
-                val textAllSurah2 = result.filter(_.id >50 )map(s => s"${s.id}. ${s.nameSurah.get}")
+            result => val textAllSurah1 = result.map(s => s"${s.id}. ${s.nameSurah.get}")
                 lineReply(chat.replyToken, textAllSurah1.mkString("\n"))
-                lineReply(chat.replyToken, textAllSurah2.mkString("\n"))
         }
     }
 
