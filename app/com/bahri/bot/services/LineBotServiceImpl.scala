@@ -32,7 +32,8 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
         command match {
             case Some(text) =>
                 text match {
-                    case txt if (txt.charAt(0) == 'Q') => getQuranByQS(text, chat)
+                    case txt if (txt.charAt(0) == 'Q') || (txt.charAt(0) == 'q') => getQuranByQS(text, chat)
+                    case x if x=="help" || x=="Help" || x=="HELP" || x=="Bantuan" || x=="bantuan"=>  getHelp(chat)
                     case "list surat" => getListSurah(chat)
                     case "list surah" => getListSurah(chat)
                     case _ => nextReadingQuran(chat)
@@ -78,8 +79,16 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
 
     protected def getQuranByQS(msg: String, chat: Event): Unit = {
         Logger.info("get Quran by QS "+ msg)
-        val surahNo = msg.replace("Q","").split(":")(0).toString.toInt
-        val ayahNo = msg.replace("Q","").split(":")(1).toString.toInt
+        var surahNo = 1
+        var ayahNo = 1
+        if(msg.contains(":")){
+            surahNo = msg.replace("Q","").replace("q", "").split(":")(0).toString.toInt
+            ayahNo = msg.replace("Q","").replace("q", "").split(":")(1).toString.toInt
+        }else{
+            surahNo = msg.replace("Q","").replace("q", "").toString.toInt
+            ayahNo = 1
+        }
+
         Logger.info(s"Surah => $surahNo, ayah => $ayahNo")
         val action = for{
             history <-LineBotServiceImpl.historiesTable.filter(_.user===chat.source.userId.getOrElse("")).result.headOption
@@ -101,6 +110,14 @@ class LineBotServiceImpl @Inject()(ws: WSClient) extends LineBotService{
                     case None => lineReply(chat.replyToken, "surah tidak ditemukan")
             }
         }
+    }
+
+    protected def getHelp(chat: Event): Unit = {
+        lineReply(chat.replyToken, "Keywords: \n - help / bantuan = menampilkan kata kunci yang tersedia dalam hikmah bot" +
+            "\n - list surah / list surat = menampilkan urutan nomor dan nama surat" +
+            "\n - Q[nomorsurat]:[nomorayat] , Contoh Q12:2 = menampilkan ayat pada surat 12 ayat 2" +
+            "\n - Q[nomorsurat] , Contoh Q13 = menampilkan surat ke 13" +
+            "\n - tekan tombol apapun, Contoh aa = meneruskan ke ayat selanjutnya.")
     }
 
     protected def nextReadingQuran(chat: Event): Unit = {
